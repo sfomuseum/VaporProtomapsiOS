@@ -58,8 +58,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 
                 try await app.execute()
+                
             } catch {
-                print("Failed to start Vapor server: \(error)")
+                fatalError("Failed to start Vapor server: \(error)")
             }
         }
     }
