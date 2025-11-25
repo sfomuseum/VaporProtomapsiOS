@@ -37,6 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func startVaporServer() {
         
             DispatchQueue.global(qos: .background).async { [weak self] in
+
                 let app = Application(.development)
                 defer { app.shutdown() }
                 self?.vaporApp = app
@@ -53,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     app.middleware.use(StripPrefixMiddleware(prefix: "/pmtiles/"))
                     app.middleware.use(FileMiddleware(publicDirectory: documentsDirectory!))
                 }
-                
+
                 do {
                     try app.run()
                 } catch {
