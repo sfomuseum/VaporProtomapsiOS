@@ -9,11 +9,14 @@ xhr.onreadystatechange = function() {
         map_el.innerHTML = "";
         const map = L.map('map');
             
-        const tile_url = "http://localhost:8080/pmtiles/sfo.pmtiles";
+        // const tile_url = "http://localhost:8080/pmtiles/sfo.pmtiles";
+        
+        const tile_url = "http://localhost:8080/ca.pmtiles";
         const tile_theme = "light";
         const tile_bounds = [ [37.601617, -122.408061], [37.640167, -122.354907] ];
         const tile_layer = protomapsL.leafletLayer({url: tile_url, theme: tile_theme});
-            
+        
+        
         console.log("TILES", tile_url);
         tile_layer.addTo(map);
         map.fitBounds(tile_bounds);
