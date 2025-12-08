@@ -24,6 +24,7 @@ struct DocumentsMiddleware: Middleware {
                       reason: "No file name could be derived from the request path.")
             )
         }
+        
         guard let documentsURL = FileManager.default.urls(
             for: .documentDirectory,
             in: .userDomainMask

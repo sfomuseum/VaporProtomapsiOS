@@ -10,8 +10,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         startVaporServer()
-        
-        
         return true
     }
     
@@ -42,20 +40,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             do {
                 let app = try await Application.make(.detect())
-                self.vaporApp = app
+                try app.configure()
                 
-                guard let wwwBundlePath = Bundle.main.path(forResource: "www", ofType: "bundle") else {
-                    fatalError("Could not find www.bundle in app resources")
-                }
-                
-                app.middleware.use(FileMiddleware(publicDirectory: wwwBundlePath))
-        
-                let documentsDirectory = self.getDocumentsDirectory()
-                
-                if documentsDirectory != "" {
-                    app.middleware.use(StripPrefixMiddleware(prefix: "/pmtiles/"))
-                    app.middleware.use(FileMiddleware(publicDirectory: documentsDirectory))
-                }
+                // self.vaporApp = app
                 
                 try await app.execute()
                 
@@ -63,11 +50,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Failed to start Vapor server: \(error)")
             }
         }
-    }
-    
-    func getDocumentsDirectory() -> String {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0].path
     }
 }
 
