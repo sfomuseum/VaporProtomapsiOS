@@ -41,11 +41,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             do {
                 let app = try await Application.make(.detect())
                 try app.configure()
-                
-                // self.vaporApp = app
-                
                 try await app.execute()
                 
+                // For shutdown stuff (above)
+                self.vaporApp = app
+
             } catch {
                 fatalError("Failed to start Vapor server: \(error)")
             }

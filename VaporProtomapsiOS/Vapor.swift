@@ -23,7 +23,8 @@ extension Application {
         
         self.middleware.use(FileMiddleware(publicDirectory: wwwBundlePath))
         
-        // The order here is important
+        // The order here is important. If this goes befor the "publicDirectory" middleware
+        // then the web application (index.html, JS, etc.) will be looked for here.
         self.middleware.use(DocumentsMiddleware())
     }
 }
