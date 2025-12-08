@@ -10,20 +10,7 @@ struct DocumentsMiddleware: Middleware {
     init(basePath: String? = nil) { self.basePath = basePath }
     
     func respond(to request: Request, chainingTo next: Responder) -> EventLoopFuture<Response> {
-        var path = request.url.path
-        if let prefix = basePath, !prefix.isEmpty, path.hasPrefix(prefix) {
-            path = String(path.dropFirst(prefix.count))
-        }
-        path = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        guard !path.isEmpty,
-              let fileName = path.split(separator: "/").last,
-              !fileName.isEmpty
-        else {
-            return request.eventLoop.makeFailedFuture(
-                Abort(.notFound,
-                      reason: "No file name could be derived from the request path.")
-            )
-        }
+        let path = request.url.path
         
         guard let documentsURL = FileManager.default.urls(
             for: .documentDirectory,
@@ -35,12 +22,12 @@ struct DocumentsMiddleware: Middleware {
             )
         }
         
-        let fileURL = documentsURL.appendingPathComponent(String(fileName))
+        let fileURL = documentsURL.appendingPathComponent(String(path))
         
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
             return request.eventLoop.makeFailedFuture(
                 Abort(.notFound,
-                      reason: "File \"\(fileName)\" not found in Documents.")
+                      reason: "File \"\(path)\" not found in Documents.")
             )
         }
         
