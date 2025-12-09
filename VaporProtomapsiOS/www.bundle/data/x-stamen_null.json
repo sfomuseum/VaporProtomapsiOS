@@ -1,0 +1,1 @@
+{"tilejson":"3.0.0","tiles":["https://tiles.stadiamaps.com/data/stamen_null/{z}/{x}/{y}.pbf"],"attribution":"","bounds":[-0.0005,-0.000282,0.000379,0.000309],"center":[0.0,0.0,14],"maxzoom":16,"minzoom":14,"name":"stamen_null","scheme":"xyz"}

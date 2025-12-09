@@ -56,7 +56,8 @@ window.addEventListener('load', function(e){
         
         const p = new pmtiles.PMTiles(tile_url);
         protocol.add(p);
-        
+
+        /*
         base_source = {
             type: "vector",
             url: "pmtiles://" + tile_url,
@@ -72,11 +73,14 @@ window.addEventListener('load', function(e){
                 "line-color": "#fc8d62",
             }
         };
-        
+         */
+	
         var map_args = {
             container: 'map',
             center: [ -122.408061, 37.601617 ],
             zoom: 13,
+            style: "http://localhost:8080/styles/stamen_toner_local.json",
+            /*
             style: {
                 version: 8,
                 sources: {
@@ -86,6 +90,7 @@ window.addEventListener('load', function(e){
                          base_layer,
                          ]
             }
+             */
         };
         
         var legend = {
