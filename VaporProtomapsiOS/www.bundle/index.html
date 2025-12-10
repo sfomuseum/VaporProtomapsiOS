@@ -2,13 +2,27 @@
     <head>
         <title></title>
         <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min-5.3.8.css" />	
         <link rel="stylesheet" type="text/css" href="css/leaflet.1.9.4.css" />
+        <link rel="stylesheet" type="text/css" href="css/maplibre-gl-5.14.0.css" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
     </head>
     <body>
 	<div class="map" id="map"></div>
+	<div id="menu">
+	    <select id="provider" class="form-select">
+		<option value="leaflet">Leaflet</option>
+		<option value="maplibre">MapLibre</option>
+	    </select>
+	    <select id="target" class="form-select">
+		<option value="sfo">SFO</option>
+	    </select>	    
+	</div>
     </body>
     <script type="text/javascript" src="javascript/leaflet.1.9.4.js"></script>
-    <script type="text/javascript" src="javascript/protomaps-leaflet.min.js"></script>
+    <script type="text/javascript" src="javascript/pmtiles-4.3.0.js"></script>
+    <script type="text/javascript" src="javascript/pmtiles.basemaps.js"></script>    
+    <script type="text/javascript" src="javascript/protomaps-leaflet-5.1.0.js"></script>
+    <script type="text/javascript" src="javascript/maplibre-gl-5.14.0.js"></script>
     <script type="text/javascript" src="javascript/index.js"></script>
 </html>

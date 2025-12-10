@@ -8,7 +8,117 @@ Experimental iOS application demonstrating how to serve Protomaps tile databases
 
 This is an experimental iOS application demonstrating how to serve Protomaps tile databases, stored in either an application's main "bundle" or its "Documents" folder, from a Vapor-based server running in the background.
 
-This is work in progress and may change without notice.
+**It is a demonstration application only and not a full-featured or customizable map application.**
+
+## Example
+
+The following example is copy-paste-ed from the code that runs this application. Consult the code in the [VaporProtomapsiOS](VaporProtomapsiOS) folder for a complete working example.
+
+In a file called `Vapor.swift`:
+
+```
+import Vapor
+
+extension Application {
+    
+	func configure() throws {
+
+		// Set up CORS stuff 
+		let corsConfiguration = CORSMiddleware.Configuration(
+			allowedOrigin: .all,
+			allowedMethods: [.GET, .OPTIONS],
+			allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent, .accessControlAllowOrigin]
+		)
+        
+		let cors = CORSMiddleware(configuration: corsConfiguration)
+		self.middleware.use(cors, at: .beginning)
+
+		// First set up a handler to serve requests for the example web application included
+		// in the "www" bundle. This is necessary because I can not figure out how to make the
+		// default "Public" directory stuff work...
+		// https://docs.vapor.codes/advanced/middleware/
+        
+		guard let wwwBundlePath = Bundle.main.path(forResource: "www", ofType: "bundle") else {
+			fatalError("Could not find www.bundle in app resources")
+		}
+        
+		self.middleware.use(FileMiddleware(publicDirectory: wwwBundlePath))
+
+		// Now set up a custom middleware handler (defined in Vapor_DocumentsMiddleware.swift)
+		// to serve files from the application's Documents folder, specifically a global Protomaps
+		// PMTiles database file named "planet.pmtiles". The order here is important. If this is
+		// defined before the "publicDirectory" middleware then the web application (index.html, JS, etc.)
+		// will try to be served from here.
+		
+		self.middleware.use(DocumentsMiddleware())
+	}
+}
+```
+
+And then in your application's `AppDelegate` file (or whereever):
+
+```
+Task {
+            
+	do {
+		let app = try await Application.make(.detect())
+		try app.configure()
+		try await app.execute()
+	} catch {
+		fatalError("Failed to start Vapor server: \(error)")
+	}
+}
+```
+
+This will launch a web server listening for requests on `http://localhost:8080` (the default port used by Vapor webservers).
+
+### Screenshots
+
+#### Initial launch screen centered on SFO
+
+When the application launches it centers on SFO using tiles provided by the `sfo.pmtiles` file bundled in the `www.bundle` folder and returned using Leaflet.
+
+![](docs/images/vapor-protomaps-ios-launch.png)
+
+#### Toggle map tile rendering provider
+
+You can toggle between Leaflet and MapLibre to render PMTiles.
+
+![](docs/images/vapor-protomaps-ios-provider-menu.png)
+
+#### Initial launch screen centered on SFO using MapLibre
+
+This is the same initial view of SFO rendered using MapLibre and a different map style (or "theme").
+
+![](docs/images/vapor-protomaps-ios-maplibre-sfo.png)
+
+#### Toggle between the SFO PMtiles database and a global PMTiles database
+
+When the application launches it checks for the presence of a file named "planet.pmtiles" at `http://localhost:8080/planet.pmtiles`.
+
+This is expected to be a PMTiles database of the entire world downloaded from the [Protomaps Maps Builds website](https://maps.protomaps.com/builds/) and manually copied in to the application's `Documents` folder. This can be under the MacOS Finder/iTunes "Files" tab for the device or using the Apple AppConfigurator tool. Note that global PMTiles databases are very large (over 130GB) so they take a while to download and to copy to the device.
+
+If the (`planet.pmtiles`) file is present then the "target" menu will be updated to include it as an option.
+
+![](docs/images/vapor-protomaps-ios-target-menu.png)
+
+#### View of Japan using MapLibre
+
+Now you can pan the map to anywhere on the world. Remember: This is running locally. No requests for map data are being sent to a remote server.
+
+![](docs/images/vapor-protomaps-ios-maplibre-japan.png)
+
+#### View of Osaka using MapLibre
+
+As with all MapLibre maps you can rotate the map itself so that the top of the map is not necessarily pointing North.
+
+![](docs/images/vapor-protomaps-ios-maplibre-osaka.png)
+
+#### View of Osaka using Leaflet
+
+Switching back to rendering map tiles with Leaflet will restore a North-oriented map view.
+
+![](docs/images/vapor-protomaps-ios-leaflet-osaka.png)
 
 ## Notes
 
