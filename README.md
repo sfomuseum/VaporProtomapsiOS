@@ -1,12 +1,12 @@
 # VaporProtomapsiOS
 
-Experimental iOS application demonstrating how to serve Protomaps tile databases from a Vapor-based server running in the background.
+Experimental iOS application demonstrating how to serve Protomaps tile databases in a [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview)-based web application from a Vapor-based server running in the background.
 
 ## Description
 
 ![](docs/images/vapor-protomaps-ios.png)
 
-This is an experimental iOS application demonstrating how to serve Protomaps tile databases, stored in either an application's main "bundle" or its "Documents" folder, from a Vapor-based server running in the background.
+This is an experimental iOS application demonstrating how to serve Protomaps tile databases, stored in either an application's main "bundle" or its "Documents" folder, in a [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview)-based web application from a Vapor-based server running in the background.
 
 **It is a demonstration application only and not a full-featured or customizable map application.**
 
@@ -98,7 +98,7 @@ When the application launches it checks for the presence of a file named "planet
 
 This is expected to be a PMTiles database of the entire world downloaded from the [Protomaps Maps Builds website](https://maps.protomaps.com/builds/) and manually copied in to the application's `Documents` folder. This can be under the MacOS Finder/iTunes "Files" tab for the device or using the Apple AppConfigurator tool. Note that global PMTiles databases are very large (over 130GB) so they take a while to download and to copy to the device.
 
-If the (`planet.pmtiles`) file is present then the "target" menu will be updated to include it as an option.
+If the (`planet.pmtiles`) file is present then the "target" menu will be updated to include it as an option. Careful readers will note that the application is looking for the presence of _any_ file named "planet.pmtiles" which means you could put a smaller PMTiles database with the same name in the `Documents` folder and that would work too. A future release might first query the `Documents` folders for all the files ending in ".pmtiles" and update the menu accordingly. Remember: This is a demonstration application only.
 
 ![](docs/images/vapor-protomaps-ios-target-menu.png)
 
