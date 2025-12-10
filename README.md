@@ -88,6 +88,8 @@ You can toggle between Leaflet and MapLibre to render PMTiles.
 
 #### Initial launch screen centered on SFO using MapLibre
 
+This is the same initial view of SFO rendered using MapLibre and a different map style (or "theme").
+
 ![](docs/images/vapor-protomaps-ios-maplibre-sfo.png)
 
 #### Toggle between the SFO PMtiles database and a global PMTiles database
