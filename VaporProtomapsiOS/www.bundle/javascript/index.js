@@ -1,5 +1,15 @@
 window.addEventListener('load', function(e){
     
+    const initial_minx = -122.408061;
+    const initial_miny = 37.601617;
+    const initial_maxx = -122.354907;
+    const initial_maxy = 37.640167;
+        
+    var current_minx;
+    var current_miny;
+    var current_maxx;
+    var current_maxy;
+        
     function showMap() {
         
         const target_el = document.querySelector("#target");
@@ -50,11 +60,36 @@ window.addEventListener('load', function(e){
         map_el.innerHTML = "";
         const map = new L.map('map');
         
-        const tile_theme = "light";
-        const tile_bounds = [ [37.601617, -122.408061], [37.640167, -122.354907] ];
-        const tile_layer = protomapsL.leafletLayer({url: tile_url, theme: tile_theme, flavor: tile_theme});
+        map.on("move", function(){
+
+            const bounds = map.getBounds();
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+            
+            current_minx = sw.lng;
+            current_miny = sw.lat;
+            current_maxx = ne.lng;
+            current_maxy = ne.lat;
+        });
         
+        const tile_theme = "light";
+        const tile_layer = protomapsL.leafletLayer({url: tile_url, theme: tile_theme, flavor: tile_theme});
         tile_layer.addTo(map);
+        
+        var tile_bounds;
+        
+        if (current_minx){
+            tile_bounds = [
+                [ current_miny, current_minx],
+                [ current_maxy, current_maxx],
+                           ]
+        } else {
+            tile_bounds = [
+                    [ initial_miny, initial_minx],
+                    [ initial_maxy, initial_maxx],
+            ];
+        }
+        
         map.fitBounds(tile_bounds);
         
         return map;
@@ -70,43 +105,49 @@ window.addEventListener('load', function(e){
         const p = new pmtiles.PMTiles(tile_url);
         protocol.add(p);
         
-        base_source = {
-            type: "vector",
-            url: "pmtiles://" + tile_url,
-        };
-        
-        base_layer = {
-            'id': 'base',
-            'source': 'base',
-            // I wish there were a way to specify "all the layers" ...
-            'source-layer': 'roads',
-            'type': "line",
-            'paint': {
-                "line-color": "#fc8d62",
-            }
-        };
-        
+        if (current_minx){
+            tile_bounds = [
+                    [ current_minx, current_miny ],
+                    [ current_maxx, current_maxy ],
+            ];
+        } else {
+            
+            tile_bounds = [
+                    [ initial_minx, initial_miny ],
+                    [ initial_maxx, initial_maxy ],
+            ];
+        }
+                
         var map_args = {
             container: 'map',
-            center: [ -122.408061, 37.601617 ],
-            zoom: 13,
-            /* style: "http://localhost:8080/styles/stamen_toner_local.json", */
+            bounds: tile_bounds,
             style: {
                 version: 8,
                 sources: {
-                    'base': base_source,
+                    'protomaps': {
+                        type: "vector",
+                        url: "pmtiles://" + tile_url,
+                    },
                 },
-                layers: [
-                         base_layer,
-                         ]
+                layers: basemaps.layers("protomaps",basemaps.namedFlavor("white"),{lang:"en"}),
             }
         };
         
-        var legend = {
-            'base': [ 'base' ],
-        };
-        
         const map = new maplibregl.Map(map_args);
+                
+        map.on("move", function(){
+            
+            const bounds = map.getBounds();
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+            
+            current_minx = sw.lng;
+            current_miny = sw.lat;
+            current_maxx = ne.lng;
+            current_maxy = ne.lat;
+
+        });
+        
         return map;
     }
     
