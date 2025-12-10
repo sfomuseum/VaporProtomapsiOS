@@ -1,6 +1,6 @@
 # VaporProtomapsiOS
 
-Experimental iOS application demonstrating how to serve Protomaps tile databases in a [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview)-based web application from a Vapor-based server running in the background.
+Experimental iOS application demonstrating how to render and display local Protomaps map tiles in a [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview)-based web application, served from a separate [Vapor](https://vapor.codes)-based web server running in the background.
 
 ## Description
 
