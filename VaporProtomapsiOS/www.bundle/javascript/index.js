@@ -5,11 +5,10 @@ window.addEventListener('load', function(e){
     const initial_maxx = -122.354907;
     const initial_maxy = 37.640167;
         
-    var current_minx;
-    var current_miny;
-    var current_maxx;
-    var current_maxy;
-        
+    var current_lat;
+    var current_lon;
+    var current_zoom;
+    
     function showMap() {
         
         const target_el = document.querySelector("#target");
@@ -60,37 +59,31 @@ window.addEventListener('load', function(e){
         map_el.innerHTML = "";
         const map = new L.map('map');
         
-        map.on("move", function(){
+        map.on("moveend", function(){
 
-            const bounds = map.getBounds();
-            const sw = bounds.getSouthWest();
-            const ne = bounds.getNorthEast();
-            
-            current_minx = sw.lng;
-            current_miny = sw.lat;
-            current_maxx = ne.lng;
-            current_maxy = ne.lat;
+            const loc = map.getCenter();
+            current_lat = loc.lat;
+            current_lon = loc.lng;
+            current_zoom = map.getZoom();
+            console.debug("Set current (Leaflet)", current_lat, current_lon, current_zoom);
         });
         
         const tile_theme = "light";
         const tile_layer = protomapsL.leafletLayer({url: tile_url, theme: tile_theme, flavor: tile_theme});
         tile_layer.addTo(map);
-        
-        var tile_bounds;
-        
-        if (current_minx){
-            tile_bounds = [
-                [ current_miny, current_minx],
-                [ current_maxy, current_maxx],
-                           ]
+                
+        if (current_lat){
+            console.debug("Set from current (Leaflet)", current_lat, current_lon, current_zoom);
+            map.setView([current_lat, current_lon], current_zoom);
         } else {
-            tile_bounds = [
+            
+            const tile_bounds = [
                     [ initial_miny, initial_minx],
                     [ initial_maxy, initial_maxx],
             ];
+            
+            map.fitBounds(tile_bounds);
         }
-        
-        map.fitBounds(tile_bounds);
         
         return map;
     }
@@ -105,22 +98,8 @@ window.addEventListener('load', function(e){
         const p = new pmtiles.PMTiles(tile_url);
         protocol.add(p);
         
-        if (current_minx){
-            tile_bounds = [
-                    [ current_minx, current_miny ],
-                    [ current_maxx, current_maxy ],
-            ];
-        } else {
-            
-            tile_bounds = [
-                    [ initial_minx, initial_miny ],
-                    [ initial_maxx, initial_maxy ],
-            ];
-        }
-                
         var map_args = {
             container: 'map',
-            bounds: tile_bounds,
             style: {
                 version: 8,
                 sources: {
@@ -133,19 +112,27 @@ window.addEventListener('load', function(e){
             }
         };
         
+        if (current_lat){
+            console.debug("Set from current (MapLibre)", current_lat, current_lon, current_zoom);
+            map_args.center = [ current_lon, current_lat ];
+            map_args.zoom = current_zoom;
+        } else {
+            
+             map_args.bounds = [
+                    [ initial_minx, initial_miny ],
+                    [ initial_maxx, initial_maxy ],
+            ];
+            
+        }
+        
         const map = new maplibregl.Map(map_args);
                 
-        map.on("move", function(){
-            
-            const bounds = map.getBounds();
-            const sw = bounds.getSouthWest();
-            const ne = bounds.getNorthEast();
-            
-            current_minx = sw.lng;
-            current_miny = sw.lat;
-            current_maxx = ne.lng;
-            current_maxy = ne.lat;
-
+        map.on("moveend", function(){
+            const loc = map.getCenter();
+            current_lat = loc.lat;
+            current_lon = loc.lng;
+            current_zoom = map.getZoom();
+            console.debug("Set current (MapLibre)", current_lat, current_lon, current_zoom);
         });
         
         return map;
