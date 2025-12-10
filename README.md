@@ -8,7 +8,7 @@ Experimental iOS application demonstrating how to serve Protomaps tile databases
 
 This is an experimental iOS application demonstrating how to serve Protomaps tile databases, stored in either an application's main "bundle" or its "Documents" folder, from a Vapor-based server running in the background.
 
-It is a demonstration application only and not a full-featured or customizable map application.
+**It is a demonstration application only and not a full-featured or customizable map application.**
 
 ## Example
 
